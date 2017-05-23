@@ -18,6 +18,9 @@ func main() {
 	router.HandleFunc("/", Index).Methods("GET")
 	router.HandleFunc("/newTodo", CreateTodo).Methods("POST")
 
+
+	//setup the DB
+	executeSql("CREATE TABLE todo (ID INT(7) USIGNED AUTO_INCREMENT PRIMARY KEY, VALUE VARCHAR(40) NOT NULL, CHECKED BOOLEAN NOT NULL DEFAULT false)")	
 	log.Fatal(http.ListenAndServe(":80", router))
 }
 
@@ -27,21 +30,17 @@ func Index(w http.ResponseWriter, req *http.Request) {
 
 
 func CreateTodo(w http.ResponseWriter, req *http.Request) {
-	// db, err := sql.Open("mysql", "root:bob@/todo"); 
+	executeSql("CREATE TABLE todo (ID INT(7) USIGNED AUTO_INCREMENT PRIMARY KEY, VALUE VARCHAR(40) NOT NULL, CHECKED BOOLEAN NOT NULL DEFAULT false)")
+}
+
+func executeSql(stmnt string) {
 	db, err := sql.Open("mysql", "root:bob@tcp(db:3306)/todo")
 	if err != nil {
-		log.Panic(err);
-		log.Fatal("Error: Connection to the DB messed up 1")
-	} else {
-		log.Print("Cool DB 1")
+ 		log.Panic(err);
+		log.Fatal("Error: Connection to the DB messed up")
 	}
+	defer db.Close()
 
-	err = db.Ping()
-	if err != nil {
-		log.Panic(err);
- 		log.Fatal("Error: Connection to the DB messed up 2")
- 	} else {
-		log.Print("Cool DB 2")
-	}
+	_, err = db.Exec(stmnt)
 }
 
