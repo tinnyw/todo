@@ -23,6 +23,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", Index).Methods("GET")
 	router.HandleFunc("/getAllTodos", GetAllTodos).Methods("GET")
+	router.HandleFunc("/getOpenTodos", GetOpenTodos).Methods("GET")
 	router.HandleFunc("/createTodos", CreateTodos).Methods("POST")
 	router.HandleFunc("/checkTodos", CheckTodos).Methods("POST")
 	router.HandleFunc("/uncheckTodos", UncheckTodos).Methods("POST")
@@ -47,6 +48,18 @@ func GetAllTodos(w http.ResponseWriter, req *http.Request) {
  	w.Write(todoJson)
 }
 
+// get all open or unchecked todos
+func GetOpenTodos(w http.ResponseWriter, req *http.Request) {
+	var todoItems = querySql("SELECT id, value, checked FROM todo WHERE checked = false")
+	todoJson, err := json.Marshal(todoItems)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+ 	w.Write(todoJson)
+}
+
 // create a list of new todos
 func CreateTodos(w http.ResponseWriter, req *http.Request) {
 	todoItems := DecodeTodoRequest(req)
@@ -57,6 +70,7 @@ func CreateTodos(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// check todos based on id
 func CheckTodos(w http.ResponseWriter, req *http.Request) {
 	todoItemsToCheck := DecodeTodoRequest(req)
 
@@ -66,6 +80,7 @@ func CheckTodos(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// uncheck todos based on id
 func UncheckTodos(w http.ResponseWriter, req *http.Request) {
 	todoItemsToUncheck := DecodeTodoRequest(req)
 
