@@ -23,6 +23,10 @@ To use this service:
 
         curl -X POST -d '[{"id": 2}, {"id": 3}]' http://localhost/checkTodos
 
-* __Uncheck Todos__ (checkTodos) - will uncheck todo items based on id
+* __Uncheck Todos__ (uncheckTodos) - will uncheck todo items based on id
 
         curl -X POST -d '[{"id": 3}]' http://localhost/uncheckTodos
+
+* __Get Open Todos__ (getOpenTodos) - will retrieve only open or unchecked todo items (value, checked status, id)
+
+        curl -X GET http://localhost/getOpenTodos
