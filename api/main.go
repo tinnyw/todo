@@ -34,17 +34,21 @@ func Index(w http.ResponseWriter, req *http.Request) {
 
 
 func CreateTodo(w http.ResponseWriter, req *http.Request) {
-	todoItem := DecodeTodoRequest(req)
-	log.Print("Todo params are:" + todoItem.Value)
+	todoItems := DecodeTodoRequest(req)
 	// var todoItem Todo
 	// _ = json.NewDecoder(req.Body).Decode(&todoItem)
-	executeSql("INSERT INTO todo (value) values ('" + todoItem.Value + "')")
+	for _, todoItem := range todoItems {
+		log.Print("Todo params are:" + todoItem.Value)
+		executeSql("INSERT INTO todo (value) values ('" + todoItem.Value + "')")
+	}
 }
 
-func DecodeTodoRequest(req *http.Request) (todoItem Todo) {
+func DecodeTodoRequest(req *http.Request) (todoItems []Todo) {
 	decoder := json.NewDecoder(req.Body)
+	/*var todoItems = new (Todo)
+  err := json.Unmarshal(req.Body, &todoItems)*/
 
-	err := decoder.Decode(&todoItem)
+	err := decoder.Decode(&todoItems)
 	if err != nil {
  		log.Panic(err)
 	}
