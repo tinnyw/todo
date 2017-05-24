@@ -9,11 +9,20 @@ To use this service:
 3. In the project folder run 'docker-compose up'
 4. Wait a minute or two till you see the MySQL message 'mysqld: ready for connections.'
 
+## API Calls
 
-* __Create API Call__ (createTodos) - will create new todo item entries, each entry will need a value field provided
+* __Create Todos__ (createTodos) - will create new todo item entries, each entry will need a value field provided
 
         curl -X POST -d '[{"value": "do 20 pushups"}, {"value": "floss teeth"}]' http://localhost/createTodos
 
-* __Get All Todos API Call__ (getAllTodos) - will retrieve all todo items whether they are checked or not
+* __Get All Todos__ (getAllTodos) - will retrieve all todo items (value, checked status, id) whether they are checked or not
 
          curl -X GET http://localhost/getAllTodos
+
+* __Check Off Todos__ (checkTodos) - will check off todo items based on id
+
+        curl -X POST -d '[{"id": 2}, {"id": 3}]' http://localhost/checkTodos
+
+* __Uncheck Todos__ (checkTodos) - will uncheck todo items based on id
+
+        curl -X POST -d '[{"id": 3}]' http://localhost/uncheckTodos
