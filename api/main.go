@@ -61,4 +61,9 @@ func executeSql(stmnt string) {
 	defer db.Close()
 
 	_, err = db.Exec(stmnt)
+
+	if err != nil {
+		log.Panic(err);
+		log.Fatal("Error: SQL execution messed up")
+	}
 }

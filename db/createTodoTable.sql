@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `todo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `todo` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `VALUE` text NOT NULL,
   `CHECKED` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
