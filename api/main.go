@@ -8,7 +8,14 @@ import (
 	"github.com/gorilla/mux"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"encoding/json"
 )
+
+type Todo  struct {
+	ID int `json:"id"`
+	Value string `json:"value"`
+	Checked bool `json:"checked"`
+}
 
 func main() {
 	/*http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +25,6 @@ func main() {
 	router.HandleFunc("/", Index).Methods("GET")
 	router.HandleFunc("/newTodo", CreateTodo).Methods("POST")
 
-
-	//setup the DB
-	executeSql("CREATE TABLE todo (ID INT(7) USIGNED AUTO_INCREMENT PRIMARY KEY, VALUE VARCHAR(40) NOT NULL, CHECKED BOOLEAN NOT NULL DEFAULT false)")	
 	log.Fatal(http.ListenAndServe(":80", router))
 }
 
@@ -30,7 +34,22 @@ func Index(w http.ResponseWriter, req *http.Request) {
 
 
 func CreateTodo(w http.ResponseWriter, req *http.Request) {
-	executeSql("CREATE TABLE todo (ID INT(7) USIGNED AUTO_INCREMENT PRIMARY KEY, VALUE VARCHAR(40) NOT NULL, CHECKED BOOLEAN NOT NULL DEFAULT false)")
+	todoItem := DecodeTodoRequest(req)
+	log.Print("Todo params are:" + todoItem.Value)
+	// var todoItem Todo
+	// _ = json.NewDecoder(req.Body).Decode(&todoItem)
+	executeSql("INSERT INTO todo (value) values ('" + todoItem.Value + "')")
+}
+
+func DecodeTodoRequest(req *http.Request) (todoItem Todo) {
+	decoder := json.NewDecoder(req.Body)
+
+	err := decoder.Decode(&todoItem)
+	if err != nil {
+ 		log.Panic(err)
+	}
+
+	return
 }
 
 func executeSql(stmnt string) {
@@ -43,4 +62,3 @@ func executeSql(stmnt string) {
 
 	_, err = db.Exec(stmnt)
 }
-
