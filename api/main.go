@@ -41,7 +41,7 @@ func GetAllTodos(w http.ResponseWriter, req *http.Request) {
 	var todoItems = querySql("SELECT id, value, checked FROM todo")
 	todoJson, err := json.Marshal(todoItems)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Fprintf(w, "DB has messed up")
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -64,8 +64,22 @@ func GetOpenTodos(w http.ResponseWriter, req *http.Request) {
 func CreateTodos(w http.ResponseWriter, req *http.Request) {
 	todoItems := DecodeTodoRequest(req)
 
+	//error check: must have at least one todo item entry
+	if len(todoItems) < 1 {
+		fmt.Fprintf(w, "Need to provide at least 1 todo item to create!")
+		return
+	}
+
+	//error check: all items to be created need value field provided
 	for _, todoItem := range todoItems {
-		log.Print("Todo params are:" + todoItem.Value)
+		if todoItem.Value == "" {
+			fmt.Fprintf(w, "All todo items provided must provide a value field")
+			return
+		}
+	}
+
+	for _, todoItem := range todoItems {
+		log.Print("Todo params are: " + todoItem.Value)
 		executeSql("INSERT INTO todo (value) values ('" + todoItem.Value + "')")
 	}
 }
@@ -74,8 +88,22 @@ func CreateTodos(w http.ResponseWriter, req *http.Request) {
 func CheckTodos(w http.ResponseWriter, req *http.Request) {
 	todoItemsToCheck := DecodeTodoRequest(req)
 
+	//error check: must have at least one todo item entry
+	if len(todoItemsToCheck) < 1 {
+		fmt.Fprintf(w, "Need to provide at least 1 todo item to check!")
+		return
+	}
+
+	//error check: all items to be checked need id field provided
 	for _, todoItemToCheck := range todoItemsToCheck {
-		log.Print("Todo params are:" + todoItemToCheck.Value)
+		if todoItemToCheck.ID == 0 {
+			fmt.Fprintf(w, "All todo items provided must provide an id field")
+			return
+		}
+	}
+
+	for _, todoItemToCheck := range todoItemsToCheck {
+		log.Print("Todo params are: " + strconv.Itoa(todoItemToCheck.ID))
 		executeSql("UPDATE todo SET checked = 1 WHERE id = " + strconv.Itoa(todoItemToCheck.ID))
 	}
 }
@@ -84,8 +112,22 @@ func CheckTodos(w http.ResponseWriter, req *http.Request) {
 func UncheckTodos(w http.ResponseWriter, req *http.Request) {
 	todoItemsToUncheck := DecodeTodoRequest(req)
 
+	//error check: must have at least one todo item entry
+	if len(todoItemsToUncheck) < 1 {
+		fmt.Fprintf(w, "Need to provide at least 1 todo item to check!")
+		return
+	}
+
+	//error check: all items to be checked need id field provided
 	for _, todoItemToUncheck := range todoItemsToUncheck {
-		log.Print("Todo params are:" + todoItemToUncheck.Value)
+		if todoItemToUncheck.ID == 0 {
+			fmt.Fprintf(w, "All todo items provided must provide an id field")
+			return
+		}
+	}
+
+	for _, todoItemToUncheck := range todoItemsToUncheck {
+		log.Print("Todo params are: " + strconv.Itoa(todoItemToUncheck.ID))
 		executeSql("UPDATE todo SET checked = 0 WHERE id = " + strconv.Itoa(todoItemToUncheck.ID))
 	}
 }
