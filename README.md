@@ -13,3 +13,7 @@ To use this service:
 * __Create API Call__ (createTodos) - will create new todo item entries, each entry will need a value field provided
 
         curl -X POST -d '[{"value": "do 20 pushups"}, {"value": "floss teeth"}]' http://localhost/createTodos
+
+* __Get All Todos API Call__ (getAllTodos) - will retrieve all todo items whether they are checked or not
+
+         curl -X GET http://localhost/getAllTodos
